@@ -33,7 +33,7 @@ class User(Base, TimestampMixin):
     notifications: Mapped[list['Notification']] = relationship(back_populates='user', lazy='noload')
     created_versions: Mapped[list['DocumentVersion']] = relationship(back_populates='author', lazy='noload')
     approvals: Mapped[list['Approval']] = relationship(back_populates='approver', lazy='noload')
-    acknowledgements: Mapped[list["DocumentAcknowledgement"]] = relationship(back_populates="user", lazy='noload')
+    acknowledgements: Mapped[list['DocumentAcknowledgement']] = relationship(back_populates='user', lazy='noload')
 
     def __repr__(self) -> str:
-        return f"<User id={self.id} email={self.email!r} is_admin={self.is_admin}>"
+        return f'<User id={self.id} email={self.email!r} is_admin={self.is_admin}>'

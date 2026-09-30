@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 import datetime
 
-from sqlalchemy import Index, func, ForeignKey, String
+from sqlalchemy import Index, func, ForeignKey, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -15,8 +15,8 @@ class RefreshToken(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     token_hash: Mapped[str] = mapped_column(String(512), unique=True, index=True)
-    created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    expires_at: Mapped[datetime.datetime] = mapped_column(index=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), index=True)
     is_revoked: Mapped[bool] = mapped_column(default=False)
 
     user_id: Mapped[int] = mapped_column(
@@ -32,7 +32,7 @@ class RefreshToken(Base):
 
     @property
     def is_expired(self) -> bool:
-        return datetime.datetime.now(datetime.timezone.utc) >= self.expires_at.replace(tzinfo=datetime.timezone.utc)
+        return datetime.datetime.now(datetime.timezone.utc) >= self.expires_at
     
     def __repr__(self) -> str:
         return f"<Token hash={self.token_hash} user id={self.user_id} is revoked={self.is_revoked}>"

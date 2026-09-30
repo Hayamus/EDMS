@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from datetime import datetime
 
 from sqlalchemy import Enum as SQLEnum
-from sqlalchemy import JSON, func, ForeignKey, Index
+from sqlalchemy import JSON, func, ForeignKey, Index, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -24,8 +24,11 @@ class AuditEntityType(str, Enum):
 class AuditAction(str, Enum):
     USER_REGISTERED = "user_registered"
     USER_LOGGED_IN = "user_logged_in"
+    USER_LOGIN_FAILED = "user_login_failed"
     USER_UPDATED = "user_updated"
     USER_DEACTIVATED = "user_deactivated"
+    USER_TOKEN_REFRESHED = "user_token_refreshed"
+    USER_LOGGED_OUT = "user_logged_out"
 
     TEAM_MEMBER_ADDED = "team_member_added"
     TEAM_MEMBER_REMOVED = "team_member_removed"
@@ -51,7 +54,7 @@ class AuditLog(Base):
     __tablename__ = 'audit_logs'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    entity_id: Mapped[int]
+    entity_id: Mapped[int | None]
     entity_type: Mapped[AuditEntityType] = mapped_column(
         SQLEnum(AuditEntityType, name='audit_entity_type', native_enum=True)
     )
@@ -59,9 +62,9 @@ class AuditLog(Base):
         SQLEnum(AuditAction, name='audit_action', native_enum=True)
     )
     details: Mapped[dict | None] = mapped_column(JSON)
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user_id: Mapped[int] = mapped_column(
+    user_id: Mapped[int | None] = mapped_column(
         ForeignKey('users.id'),
         index=True
     )
