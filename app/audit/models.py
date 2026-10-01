@@ -32,6 +32,7 @@ class AuditAction(str, Enum):
 
     TEAM_MEMBER_ADDED = "team_member_added"
     TEAM_MEMBER_REMOVED = "team_member_removed"
+    TEAM_MEMBER_ROLE_CHANGED = "team_member_role_changed"
 
     DOCUMENT_CREATED = "document_created"
     DOCUMENT_UPDATED = "document_updated"
